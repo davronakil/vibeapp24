@@ -1,61 +1,71 @@
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { useState } from 'react';
 import { db, auth } from '../firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import BottomNav from '../components/BottomNav';
+import { doc, setDoc } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-const Profile = () => {
-  const [user, loading, error] = useAuthState(auth);
-  const [profileData, setProfileData] = useState(null);
-  const [fetching, setFetching] = useState(true);
-  const [fetchError, setFetchError] = useState(null);
+export default function Profile() {
+  const [user] = useAuthState(auth);
+  const [profile, setProfile] = useState({
+    name: '',
+    email: '',
+    bio: '',
+    location: '',
+    interests: '',
+    profilePicture: ''
+  });
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (user) {
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setProfileData(docSnap.data());
-          } else {
-            setFetchError('No profile data found');
-          }
-        } catch (err) {
-          setFetchError(err.message);
-        } finally {
-          setFetching(false);
-        }
-      } else {
-        setFetching(false);
-        setFetchError('User not authenticated');
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfile({
+      ...profile,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (user) {
+      try {
+        await setDoc(doc(db, 'profiles', user.uid), profile);
+        console.log('Profile saved successfully');
+      } catch (error) {
+        console.error('Error saving profile: ', error);
       }
-    };
-
-    fetchProfileData();
-  }, [user]);
-
-  if (loading || fetching) return <div>Loading...</div>;
-  if (error || fetchError) return <div>Error: {error?.message || fetchError}</div>;
+    } else {
+      console.log('No user is signed in');
+    }
+  };
 
   return (
     <div>
-      <h1>Profile</h1>
-      {profileData ? (
+      <h1>Edit Profile</h1>
+      <form onSubmit={handleSubmit}>
         <div>
-          <p>Goals: {profileData.goals}</p>
-          <p>Age: {profileData.age}</p>
-          <p>Diet: {profileData.diet}</p>
-          <p>Marital Status: {profileData.maritalStatus}</p>
-          <p>Interests: {profileData.interests}</p>
-          <p>Substances: {profileData.substances}</p>
+          <label>Name:</label>
+          <input type="text" name="name" value={profile.name} onChange={handleChange} />
         </div>
-      ) : (
-        <div>No profile data available</div>
-      )}
-      <BottomNav />
+        <div>
+          <label>Email:</label>
+          <input type="email" name="email" value={profile.email} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Bio:</label>
+          <textarea name="bio" value={profile.bio} onChange={handleChange}></textarea>
+        </div>
+        <div>
+          <label>Location:</label>
+          <input type="text" name="location" value={profile.location} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Interests:</label>
+          <input type="text" name="interests" value={profile.interests} onChange={handleChange} />
+        </div>
+        <div>
+          <label>Profile Picture URL:</label>
+          <input type="text" name="profilePicture" value={profile.profilePicture} onChange={handleChange} />
+        </div>
+        <button type="submit">Save Profile</button>
+      </form>
     </div>
   );
-};
-
-export default Profile;
+}
