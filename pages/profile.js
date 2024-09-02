@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { db, auth } from '../firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/router';
 
 export default function Profile() {
   const [user] = useAuthState(auth);
@@ -13,6 +15,7 @@ export default function Profile() {
     interests: '',
     profilePicture: ''
   });
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -48,6 +51,15 @@ export default function Profile() {
       }
     } else {
       console.log('No user is signed in');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push('/login');
+    } catch (error) {
+      console.error('Error signing out: ', error);
     }
   };
 
@@ -121,6 +133,12 @@ export default function Profile() {
           Save Profile
         </button>
       </form>
+      <button
+        onClick={handleLogout}
+        className="w-full mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+      >
+        Logout
+      </button>
     </div>
   );
 }
