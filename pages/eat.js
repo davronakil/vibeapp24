@@ -11,8 +11,9 @@ export default function Eat() {
         <h1 className="text-3xl font-bold">Eat</h1>
         {user && (
           <Link href="/new-eat-event">
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
             <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Let's Eat
+              Let&apos;s Eat
             </button>
           </Link>
         )}
