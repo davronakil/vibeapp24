@@ -1,36 +1,20 @@
-import Link from 'next/link';
-import BottomNav from '../components/BottomNav';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebaseConfig';
 
-const HomePage = () => {
+export default function Home() {
+  const [user] = useAuthState(auth);
+
   return (
-    <div>
-      <h1>Home Page</h1>
-      <ul>
-        <li>
-          <Link href="/">Feed</Link>
-        </li>
-        <li>
-          <Link href="/profile">Profile</Link>
-        </li>
-        <li>
-          <Link href="/eat">Eat</Link>
-        </li>
-        <li>
-          <Link href="/favorites">Favorites</Link>
-        </li>
-        <li>
-          <Link href="/chat">Chat</Link>
-        </li>
-        <li>
-          <Link href="/create-event">Create Event</Link>
-        </li>
-        <li>
-          <Link href="/onboarding">Onboarding</Link>
-        </li>
-      </ul>
-      <BottomNav />
+    <div className="max-w-2xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Home</h1>
+      {user ? (
+        <div className="space-y-4">
+          {/* Add your home content here */}
+          <p className="text-gray-700">Welcome to VibeApp24!</p>
+        </div>
+      ) : (
+        <p className="text-gray-700">Please log in to access your home page.</p>
+      )}
     </div>
   );
-};
-
-export default HomePage;
+}
