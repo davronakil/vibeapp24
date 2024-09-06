@@ -1,12 +1,30 @@
-import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
-import { fetchEvents, fetchEats } from '../lib/firebase';
-import { EventEatTabs, TabsContent } from './Tabs'; // Ensure the correct file name
-import { Card } from './Card'; // Ensure the correct file name
-import { Home } from './Home';
+import { useEffect, useState } from 'react';
+import { fetchEvents, fetchEats, Event } from '../../lib/firebase';
+import { EventEatTabs, TabsContent } from './tabs'; // Ensure the correct file name
+import { Card } from './card'; // Ensure the correct file name
 
 export function EventEatDisplay() {
-    const { items: events, loadMore: loadMoreEvents, loading: loadingEvents } = useInfiniteScroll(fetchEvents);
-    const { items: eats, loadMore: loadMoreEats, loading: loadingEats } = useInfiniteScroll(fetchEats);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [eats, setEats] = useState<Event[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(true);
+    const [loadingEats, setLoadingEats] = useState(true);
+
+    useEffect(() => {
+        const loadEvents = async () => {
+            const events = await fetchEvents();
+            setEvents(events);
+            setLoadingEvents(false);
+        };
+
+        const loadEats = async () => {
+            const eats = await fetchEats();
+            setEats(eats);
+            setLoadingEats(false);
+        };
+
+        loadEvents();
+        loadEats();
+    }, []);
 
     return (
         <EventEatTabs>
@@ -15,14 +33,12 @@ export function EventEatDisplay() {
                     <Card key={event.id} title={event.title} description={event.description} />
                 ))}
                 {loadingEvents && <p>Loading...</p>}
-                <button onClick={loadMoreEvents} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Load More</button>
             </TabsContent>
             <TabsContent value="eats">
                 {eats.map(eat => (
                     <Card key={eat.id} title={eat.title} description={eat.description} />
                 ))}
                 {loadingEats && <p>Loading...</p>}
-                <button onClick={loadMoreEats} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Load More</button>
             </TabsContent>
         </EventEatTabs>
     );

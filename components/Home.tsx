@@ -20,7 +20,12 @@ export function Home({ events }: HomeProps) {
     <div>
       {/* Render your events here */}
       {events.map(event => (
-        <div key={event.id}>{event.name}</div>
+        <div key={event.id}>
+          <h3>{event.title}</h3>
+          <p>{event.description}</p>
+          <p>{event.date}</p>
+          <p>{event.location}</p>
+        </div>
       ))}
       <button onClick={handleAddEvent}>Add Event</button>
     </div>

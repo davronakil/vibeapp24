@@ -1,10 +1,8 @@
-import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs } from "firebase/firestore";
-import { firebaseApp } from "./firebaseConfig"; // Ensure you have firebaseConfig setup
-import { Event } from './firebaseConfig';
+import { firebaseApp, db } from './firebaseConfig';
+import { Event, Eat } from './firebaseConfig';
+import { collection, query, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
 
-const db = getFirestore(firebaseApp);
-
-export async function fetchEvents(lastVisible: any = null) {
+export async function fetchEvents(lastVisible: any = null): Promise<Event[]> {
     console.log("Fetching events...");
     const eventsQuery = query(
         collection(db, "events"),
@@ -13,13 +11,22 @@ export async function fetchEvents(lastVisible: any = null) {
         ...(lastVisible ? [startAfter(lastVisible)] : [])
     );
     const snapshot = await getDocs(eventsQuery);
-    const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+    const events = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            title: data.title,
+            description: data.description,
+            date: data.date,
+            location: data.location,
+            imageUrl: data.imageUrl ?? null,
+        } as Event;
+    });
     console.log("Fetched events:", events);
-    return { events, lastDoc };
+    return events;
 }
 
-export async function fetchEats(lastVisible: any = null) {
+export async function fetchEats(lastVisible: any = null): Promise<Event[]> {
     const eatsQuery = query(
         collection(db, "eats"),
         orderBy("timestamp", "desc"),
@@ -27,16 +34,35 @@ export async function fetchEats(lastVisible: any = null) {
         ...(lastVisible ? [startAfter(lastVisible)] : [])
     );
     const snapshot = await getDocs(eatsQuery);
-    const eats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const lastDoc = snapshot.docs[snapshot.docs.length - 1];
-    return { eats, lastDoc };
+    const eats = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            title: data.title,
+            description: data.description,
+            date: data.date,
+            location: data.location,
+            imageUrl: data.imageUrl ?? null,
+        } as Event;
+    });
+    return eats;
 }
 
 export async function getEvents(): Promise<Event[]> {
     const eventsCol = collection(db, 'events');
     const eventSnapshot = await getDocs(eventsCol);
-    return eventSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    } as Event));
+    return eventSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            title: data.title,
+            description: data.description,
+            date: data.date,
+            location: data.location,
+            imageUrl: data.imageUrl ?? null,
+        } as Event;
+    });
 }
+
+export { db };
+export type { Event, Eat };

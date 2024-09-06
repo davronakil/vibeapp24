@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db, auth } from '../firebaseConfig';
+import { db } from '../lib/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 

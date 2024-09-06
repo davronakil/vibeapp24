@@ -1,4 +1,4 @@
-import { db } from './firebaseConfig';
+import { db } from './lib/firebaseConfig';
 import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
 
 interface User {
@@ -7,12 +7,10 @@ interface User {
   email: string;
 }
 
-function addUser(user: User) {
-  return addDoc(collection(db, 'users'), user);
+export async function addUser(user: User) {
+  await addDoc(collection(db, 'users'), user);
 }
 
-function updateUser(user: User) {
-  return setDoc(doc(db, 'users', user.id), user);
+export async function updateUser(user: User) {
+  await setDoc(doc(db, 'users', user.id), user);
 }
-
-export { addUser, updateUser };

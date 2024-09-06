@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import { fetchEvents, Event } from '../lib/firebase';
-import { Home } from '../components/home'; // Corrected import path
+import { Home } from '../components/Home'; // Ensure this matches the actual file name
 
 interface HomePageProps {
     events: Event[];
@@ -12,16 +12,9 @@ export default function HomePage({ events }: HomePageProps) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const events = await fetchEvents();
-
-    // Ensure events is an array
-    const sanitizedEvents = Array.isArray(events) ? events.map(event => ({
-        ...event,
-        lastDoc: event.lastDoc ?? null,
-    })) : [];
-
     return {
         props: {
-            events: sanitizedEvents,
+            events,
         },
     };
 };
