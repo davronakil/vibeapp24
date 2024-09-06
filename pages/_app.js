@@ -1,3 +1,4 @@
+import { firebaseConfig } from '/firebaseConfig.js';
 import { auth } from '../firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
