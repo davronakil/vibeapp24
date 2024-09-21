@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, firestore } from '../firebaseConfig'; // Ensure the correct import path
+import { auth } from '../firebaseConfig'; // Ensure the correct import path
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore'; // Ensure you import this
 import Link from 'next/link';
 
 export default function Home() {
   const [user] = useAuthState(auth);
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const firestore = getFirestore(); // Initialize Firestore
 
   useEffect(() => {
     async function fetchEvents() {
