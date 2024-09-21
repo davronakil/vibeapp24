@@ -1,4 +1,4 @@
-import { db } from './firebaseConfig';
+import { firestore } from './firebaseConfig'; // Change db to firestore
 import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
 
 interface User {
@@ -8,9 +8,9 @@ interface User {
 }
 
 export async function addUser(user: User) {
-  await addDoc(collection(db, 'users'), user);
+  await addDoc(collection(firestore, 'users'), user);
 }
 
 export async function updateUser(user: User) {
-  await setDoc(doc(db, 'users', user.id), user);
+  await setDoc(doc(firestore, 'users', user.id), user);
 }
