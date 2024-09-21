@@ -3,6 +3,7 @@ import { db } from '../lib/firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'next/router';
+import { auth } from '../firebaseConfig'; // Ensure you import auth
 
 export default function NewEatEvent() {
   const [user] = useAuthState(auth);
